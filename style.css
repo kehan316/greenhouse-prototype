@@ -24,7 +24,7 @@ body { display: flex; justify-content: center; }
 #app {
   position: relative;
   width: 100%;
-  max-width: 430px;
+  max-width: 960px;
   height: 100vh;
   height: 100dvh;
   display: flex;
@@ -57,103 +57,60 @@ body { display: flex; justify-content: center; }
 }
 #goals { color: #e8e4ff; font-size: 13px; padding: 0 14px 8px; }
 
-/* ---------- scene ---------- */
+/* ---------- scene (Phaser canvas) ---------- */
 #scene {
   position: relative;
   flex: 1;
-  margin: 0 10px;
-  border-radius: 22px 22px 10px 10px;
+  min-height: 0;
+  margin: 0 8px;
+  border-radius: 18px;
   overflow: hidden;
-  border: 3px solid rgba(255, 255, 255, .35);
-  --sky1: #2b2f5c; --sky2: #6f5a9a; --floor: #4a3628;
-  background: linear-gradient(to bottom, var(--sky1) 0%, var(--sky2) 42%, var(--floor) 42%, var(--floor) 100%);
-  transition: --sky1 1.5s, --sky2 1.5s;
+  border: 2px solid rgba(255, 255, 255, .25);
+  touch-action: none;
 }
-#scene[data-sky="dawn"]  { --sky1: #f7c59f; --sky2: #fde8c9; --floor: #6d4f35; }
-#scene[data-sky="day"]   { --sky1: #9fd6ff; --sky2: #e9f7ff; --floor: #7c5a3a; }
-#scene[data-sky="dusk"]  { --sky1: #f29e6b; --sky2: #7b5fa0; --floor: #5a4130; }
-#scene[data-sky="night"] { --sky1: #0b1030; --sky2: #29306a; --floor: #33261f; }
+#scene canvas { display: block; }
 
-/* glass panes */
-#scene::before {
+/* context bubble (tap an object in the greenhouse) */
+#bubble {
+  position: absolute;
+  z-index: 8;
+  transform: translate(-50%, calc(-100% - 10px));
+  background: var(--panel);
+  border-radius: 14px;
+  padding: 9px 10px 8px;
+  min-width: 150px;
+  max-width: 230px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, .35);
+  font-size: 13px;
+}
+#bubble::after {
   content: "";
   position: absolute;
-  inset: 0 0 58% 0;
-  background:
-    repeating-linear-gradient(90deg, rgba(255,255,255,.22) 0 2px, transparent 2px 25%),
-    repeating-linear-gradient(0deg, rgba(255,255,255,.14) 0 2px, transparent 2px 33.3%);
-  pointer-events: none;
+  left: 50%;
+  bottom: -7px;
+  transform: translateX(-50%) rotate(45deg);
+  width: 14px;
+  height: 14px;
+  background: var(--panel);
 }
-
-.plot {
-  position: absolute;
-  width: 27%;
-  aspect-ratio: 1;
-  transform: translate(-50%, -50%);
-  border-radius: 16px;
-  background: #5b3f2a;
-  box-shadow: inset 0 -6px 0 rgba(0, 0, 0, .28);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-}
-.plot .sprite { font-size: 40px; line-height: 1.1; }
-.plot .label {
-  font-size: 11px;
-  color: #f3e9dc;
-  margin-top: 2px;
-  text-align: center;
-  padding: 0 4px;
-}
-.plot.ready .sprite { animation: budPulse 1.6s ease-in-out infinite; }
-.plot.sleeping .sprite { filter: grayscale(.4) brightness(.65); }
-.plot.protected::after {
-  content: "";
-  position: absolute;
-  inset: 4%;
-  border: 4px dotted #fffdf2;
-  border-radius: 50%;
-  pointer-events: none;
-}
-.plot.trail::before {
-  content: "〰️";
-  position: absolute;
-  bottom: -4px;
-  left: -10px;
-  font-size: 18px;
-  opacity: .8;
-}
-.plot.has-leaves .sprite::before {
-  content: "🍂";
-  position: absolute;
-  font-size: 22px;
-  transform: translate(10px, -14px);
-}
-@keyframes budPulse {
-  0%, 100% { filter: drop-shadow(0 0 2px #fff7b0); }
-  50% { filter: drop-shadow(0 0 12px #fff7b0); }
-}
-
-.ent {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  font-size: 30px;
-  cursor: pointer;
+#bubble b { display: block; font-size: 14px; }
+#bubble .sub { color: var(--muted); margin: 2px 0 4px; line-height: 1.3; }
+#bubble button {
+  display: block;
+  width: 100%;
+  margin-top: 5px;
   padding: 8px;
-  line-height: 1;
+  border: 0;
+  border-radius: 10px;
+  background: #3a3f8f;
+  color: #fff;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  position: relative;
+  z-index: 1;
 }
-.ent span { display: inline-block; }
-.ent.dew { font-size: 24px; animation: shimmer 1.4s ease-in-out infinite; }
-.ent.moth { font-size: 28px; transition: filter .2s; }
-.ent.moth.selected { filter: drop-shadow(0 0 10px #fff6a0) drop-shadow(0 0 4px #fff); }
-.ent.slug { font-size: 26px; }
-.ent.gift-ent { font-size: 44px; cursor: default; }
-@keyframes shimmer {
-  0%, 100% { opacity: .75; }
-  50% { opacity: 1; }
-}
+#bubble button:disabled { background: #b9b4c4; cursor: default; }
 
 /* ---------- caption (recap) ---------- */
 #caption {
@@ -174,13 +131,14 @@ body { display: flex; justify-content: center; }
   padding: 10px;
   align-items: center;
 }
-#inventory { display: flex; gap: 6px; flex: 1; flex-wrap: wrap; }
+#inventory { display: flex; gap: 6px; flex: 1; justify-content: center; }
 .slot {
   background: var(--slot);
   color: #fff;
   border-radius: 12px;
   padding: 5px 6px 4px;
-  min-width: 54px;
+  flex: 1;
+  max-width: 76px;
   text-align: center;
   font-size: 20px;
   border: 2px solid transparent;
@@ -215,6 +173,7 @@ body { display: flex; justify-content: center; }
   z-index: 10;
 }
 #panel {
+  max-width: 440px;
   background: var(--panel);
   border-radius: 18px;
   padding: 20px 18px;
