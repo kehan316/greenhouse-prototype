@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="author" content="Kehan Wang">
+  <title>Twilight Greenhouse — Night Shift Prototype</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <header id="hud">
+      <div id="clock">18:00</div>
+      <div id="phase">Twilight Greenhouse</div>
+      <button id="btn-journal" class="icon-btn hidden" title="Sol's journal">📖</button>
+    </header>
+    <div id="goals" class="hidden"></div>
+    <main id="scene" data-sky="dusk"></main>
+    <div id="caption" class="hidden"></div>
+    <footer id="bar" class="hidden">
+      <div id="inventory"></div>
+      <button id="btn-end" class="small-btn">End shift</button>
+    </footer>
+    <div id="overlay" class="hidden"><div id="panel"></div></div>
+    <div id="toast"></div>
+    <div id="fx-layer"></div>
+  </div>
+  <script src="game.js"></script>
+</body>
+</html>
